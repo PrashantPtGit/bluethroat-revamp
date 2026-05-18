@@ -5,7 +5,6 @@ import './globals.css'
 import { LanguageProvider } from '@/context/LanguageContext'
 import LenisProvider from '@/components/LenisProvider'
 import Navbar from '@/components/Navbar'
-import IrishBadge from '@/components/IrishBadge'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -40,7 +39,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <LenisProvider>
             <Navbar />
             {children}
-            <IrishBadge />
           </LenisProvider>
         </LanguageProvider>
         {/* TODO Phase 2: Add Google Analytics 4 gtag here */}

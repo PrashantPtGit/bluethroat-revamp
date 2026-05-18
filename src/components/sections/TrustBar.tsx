@@ -1,71 +1,28 @@
 'use client'
 
 import { Fragment, useRef } from 'react'
+import type { CSSProperties } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { useLanguage } from '@/context/LanguageContext'
 import { useCountUp } from '@/hooks/useCountUp'
-import type { Lang } from '@/lib/i18n'
-
-// ---------------------------------------------------------------------------
-// Copy
-// ---------------------------------------------------------------------------
-
-type TrustCopy = { label: string; students: string; countries: string }
-
-const TRUST_COPY: Record<Lang, TrustCopy> = {
-  en: {
-    label: 'Trusted by YC-backed companies',
-    students: 'students mentored',
-    countries: 'countries',
-  },
-  ga: {
-    label: 'Muinínithe ag comhlachtaí YC',
-    students: 'mac léinn meantóireachta',
-    countries: 'tíortha',
-  },
-  fr: {
-    label: 'Approuvé par des entreprises YC',
-    students: 'étudiants mentorés',
-    countries: 'pays',
-  },
-  es: {
-    label: 'Confiado por empresas respaldadas por YC',
-    students: 'estudiantes mentorizados',
-    countries: 'países',
-  },
-}
 
 // ---------------------------------------------------------------------------
 // Data
 // ---------------------------------------------------------------------------
 
-const LOGOS = [
-  { name: 'Sarg.io',    fontWeight: 700, fontSize: 16, letterSpacing: '-0.02em', fontStyle: 'normal'  as const },
-  { name: 'Codemagic',  fontWeight: 600, fontSize: 15, letterSpacing: '0',       fontStyle: 'normal'  as const },
-  { name: 'Mintlify',   fontWeight: 700, fontSize: 15, letterSpacing: '0',       fontStyle: 'italic'  as const },
-  { name: 'Tolgee',     fontWeight: 600, fontSize: 15, letterSpacing: '0',       fontStyle: 'normal'  as const },
-  { name: 'Dyte',       fontWeight: 700, fontSize: 16, letterSpacing: '0.05em',  fontStyle: 'normal'  as const },
-  { name: 'Bloop',      fontWeight: 600, fontSize: 15, letterSpacing: '0',       fontStyle: 'normal'  as const },
-]
-
-const BADGES = [
-  '🇮🇪 Irish-registered',
-  '⚡ Builder-led',
-  '🏆 YC-adjacent clients',
-]
+const LOGOS = ['Codemagic', 'Mintlify', 'Dyte', 'Tolgee', 'Bloop']
 
 // ---------------------------------------------------------------------------
 // Variants
 // ---------------------------------------------------------------------------
 
 const labelVariants = {
-  hidden: { opacity: 0, y: 10 },
-  show:   { opacity: 1, y: 0,  transition: { duration: 0.6 } },
+  hidden: { opacity: 0 },
+  show:   { opacity: 1, transition: { duration: 0.6 } },
 }
 
 const logoContainerVariants = {
   hidden: {},
-  show:   { transition: { staggerChildren: 0.1, delayChildren: 0.3 } },
+  show:   { transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
 }
 
 const logoItemVariants = {
@@ -73,76 +30,86 @@ const logoItemVariants = {
   show:   { opacity: 1, transition: { duration: 0.5 } },
 }
 
-const badgeContainerVariants = {
+const pivotVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show:   { opacity: 1, y: 0, transition: { delay: 0.4, duration: 0.8 } },
+}
+
+const pillsContainerVariants = {
   hidden: {},
-  show:   { transition: { staggerChildren: 0.15, delayChildren: 0.5 } },
+  show:   { transition: { staggerChildren: 0.1, delayChildren: 0.6 } },
 }
 
-const badgeItemVariants = {
+const pillVariants = {
   hidden: { opacity: 0, y: 10 },
-  show:   { opacity: 1, y: 0,  transition: { duration: 0.5 } },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.5 } },
 }
 
 // ---------------------------------------------------------------------------
-// Sub-components
+// Shared styles
 // ---------------------------------------------------------------------------
 
-function Divider() {
-  return (
-    <div
-      style={{
-        height: '1px',
-        background: 'rgba(255,255,255,0.06)',
-        margin: '40px 0',
-      }}
-    />
-  )
+const pillStyle: CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  background: 'rgba(255,255,255,0.04)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  borderRadius: '20px',
+  padding: '10px 20px',
+}
+
+const numberStyle: CSSProperties = {
+  fontSize: '15px',
+  fontWeight: 600,
+  color: '#F8FAFC',
+}
+
+const labelStyle: CSSProperties = {
+  fontSize: '13px',
+  color: '#475569',
+  marginLeft: '6px',
 }
 
 // ---------------------------------------------------------------------------
-// Main component
+// Component
 // ---------------------------------------------------------------------------
 
 export default function TrustBar() {
-  const { lang } = useLanguage()
-  const copy = TRUST_COPY[lang]
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(sectionRef, { once: true, margin: '-80px' })
 
-  const sectionRef = useRef<HTMLElement>(null)
-  const isInView = useInView(sectionRef, { once: true, margin: '-100px' })
-
-  const stat1 = useCountUp(500, 2000, 0)
-  const stat2 = useCountUp(6, 1500, 200)
+  const stat1 = useCountUp(500, 1800)
+  const stat2 = useCountUp(6, 1500)
 
   return (
-    <motion.section
+    <motion.div
       ref={sectionRef}
       initial="hidden"
       animate={isInView ? 'show' : 'hidden'}
       style={{
         background: '#0D0F12',
         borderTop: '1px solid rgba(255,255,255,0.06)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-        padding: '48px 24px',
+        padding: '64px 24px',
       }}
     >
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
-        {/* ── Row 1: Trust label ───────────────────────────────────────── */}
+        {/* ── Row 1: Founder credibility label ─────────────────────── */}
         <motion.p
           variants={labelVariants}
           style={{
             textAlign: 'center',
-            fontSize: '11px',
-            letterSpacing: '0.12em',
+            fontSize: '12px',
+            letterSpacing: '0.1em',
             textTransform: 'uppercase',
             color: '#475569',
-            marginBottom: '32px',
+            marginBottom: '24px',
           }}
         >
-          {copy.label}
+          The founder has shipped for
         </motion.p>
 
-        {/* ── Row 2: Logo strip ────────────────────────────────────────── */}
+        {/* ── Logo strip ───────────────────────────────────────────── */}
         <motion.div
           variants={logoContainerVariants}
           style={{
@@ -150,27 +117,25 @@ export default function TrustBar() {
             justifyContent: 'center',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: '48px',
+            gap: '40px',
           }}
         >
-          {LOGOS.map((logo, i) => (
+          {LOGOS.map((name, i) => (
             <Fragment key={i}>
               <motion.span
                 variants={logoItemVariants}
                 style={{
-                  fontWeight: logo.fontWeight,
-                  fontSize: `${logo.fontSize}px`,
-                  letterSpacing: logo.letterSpacing,
-                  fontStyle: logo.fontStyle,
-                  color: '#94A3B8',
+                  fontWeight: 600,
+                  fontSize: '15px',
+                  color: '#64748B',
                   cursor: 'default',
                   userSelect: 'none',
-                  transition: 'color 200ms',
+                  transition: 'color 250ms',
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.color = '#F8FAFC' }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = '#94A3B8' }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#64748B' }}
               >
-                {logo.name}
+                {name}
               </motion.span>
 
               {i < LOGOS.length - 1 && (
@@ -179,7 +144,7 @@ export default function TrustBar() {
                   style={{
                     color: '#2563EB',
                     fontSize: '8px',
-                    opacity: 0.5,
+                    opacity: 0.4,
                     userSelect: 'none',
                   }}
                 >
@@ -190,122 +155,60 @@ export default function TrustBar() {
           ))}
         </motion.div>
 
-        <Divider />
-
-        {/* ── Row 3: Stats ─────────────────────────────────────────────── */}
+        {/* ── Vertical divider ─────────────────────────────────────── */}
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            gap: '64px',
+            width: '1px',
+            height: '48px',
+            background: 'rgba(255,255,255,0.08)',
+            margin: '48px auto',
+          }}
+        />
+
+        {/* ── Row 2: Pivot line ────────────────────────────────────── */}
+        <motion.p
+          variants={pivotVariants}
+          style={{
+            textAlign: 'center',
+            fontSize: '22px',
+            fontWeight: 500,
+            color: '#F8FAFC',
+            maxWidth: '500px',
+            margin: '0 auto',
+            lineHeight: 1.5,
           }}
         >
-          {/* Stat 1 — students */}
-          <div style={{ textAlign: 'center' }}>
-            <div
-              ref={stat1.ref}
-              style={{
-                display: 'flex',
-                alignItems: 'baseline',
-                justifyContent: 'center',
-                gap: '2px',
-              }}
-            >
-              <span style={{ fontSize: '40px', fontWeight: 600, color: '#F8FAFC', lineHeight: 1 }}>
-                {stat1.count}
-              </span>
-              <span style={{ fontSize: '40px', fontWeight: 600, color: '#2563EB', lineHeight: 1 }}>
-                +
-              </span>
-            </div>
-            <p style={{ fontSize: '13px', color: '#475569', marginTop: '4px' }}>
-              {copy.students}
-            </p>
-          </div>
+          Now building the same quality — for{' '}
+          <span style={{ color: '#2563EB' }}>your</span> business.
+        </motion.p>
 
-          {/* Stat 2 — countries */}
-          <div style={{ textAlign: 'center' }}>
-            <div
-              ref={stat2.ref}
-              style={{
-                display: 'flex',
-                alignItems: 'baseline',
-                justifyContent: 'center',
-                gap: '2px',
-              }}
-            >
-              <span style={{ fontSize: '40px', fontWeight: 600, color: '#F8FAFC', lineHeight: 1 }}>
-                {stat2.count}
-              </span>
-              <span style={{ fontSize: '40px', fontWeight: 600, color: '#2563EB', lineHeight: 1 }}>
-                +
-              </span>
-            </div>
-            <p style={{ fontSize: '13px', color: '#475569', marginTop: '4px' }}>
-              {copy.countries}
-            </p>
-          </div>
-
-          {/* Stat 3 — Irish-registered (static) */}
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'baseline',
-                justifyContent: 'center',
-                flexWrap: 'wrap',
-                gap: '0',
-              }}
-            >
-              <span style={{ fontSize: '40px', fontWeight: 600, color: '#F8FAFC', lineHeight: 1 }}>
-                Irish
-              </span>
-              <span style={{ fontSize: '40px', fontWeight: 600, color: '#2563EB', lineHeight: 1 }}>
-                -registered
-              </span>
-            </div>
-            <p style={{ fontSize: '13px', color: '#475569', marginTop: '4px' }}>
-              agency · .ie domain
-            </p>
-          </div>
-        </div>
-
-        <Divider />
-
-        {/* ── Row 4: Trust badges ──────────────────────────────────────── */}
+        {/* ── Row 3: Stat pills ────────────────────────────────────── */}
         <motion.div
-          variants={badgeContainerVariants}
+          variants={pillsContainerVariants}
           style={{
             display: 'flex',
             justifyContent: 'center',
             flexWrap: 'wrap',
-            gap: '16px',
+            gap: '12px',
+            marginTop: '40px',
           }}
         >
-          {BADGES.map((badge, i) => (
-            <motion.div
-              key={i}
-              variants={badgeItemVariants}
-              whileHover={{ backgroundColor: 'rgba(37,99,235,0.15)', color: '#F8FAFC' }}
-              transition={{ duration: 0.2 }}
-              style={{
-                backgroundColor: 'rgba(37,99,235,0.08)',
-                border: '1px solid rgba(37,99,235,0.2)',
-                borderRadius: '20px',
-                padding: '8px 16px',
-                fontSize: '12px',
-                color: '#94A3B8',
-                cursor: 'default',
-                userSelect: 'none',
-              }}
-            >
-              {badge}
-            </motion.div>
-          ))}
+          <motion.div ref={stat1.ref} variants={pillVariants} style={pillStyle}>
+            <span style={numberStyle}>{stat1.count}+</span>
+            <span style={labelStyle}>professionals mentored</span>
+          </motion.div>
+
+          <motion.div ref={stat2.ref} variants={pillVariants} style={pillStyle}>
+            <span style={numberStyle}>{stat2.count}</span>
+            <span style={labelStyle}>countries</span>
+          </motion.div>
+
+          <motion.div variants={pillVariants} style={pillStyle}>
+            <span style={{ ...numberStyle, fontSize: '14px' }}>Irish-registered agency</span>
+          </motion.div>
         </motion.div>
 
       </div>
-    </motion.section>
+    </motion.div>
   )
 }
