@@ -29,7 +29,7 @@ export default function FloatingBlue() {
   const [mounted,   setMounted]   = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [mood,      setMood]      = useState<BlueMode>('idle')
-  const [blueSize,  setBlueSize]  = useState(200)
+  const [blueSize,  setBlueSize]  = useState(160)
   const [message,   setMessage]   = useState<string | null>(null)
 
   // Motion values + springs
@@ -42,7 +42,7 @@ export default function FloatingBlue() {
   const isMountedRef    = useRef(false)
   const isMobileRef     = useRef(false)
   const moodRef         = useRef<BlueMode>('idle')
-  const blueSizeRef     = useRef(200)
+  const blueSizeRef     = useRef(160)
   const idleTimerRef    = useRef<ReturnType<typeof setTimeout> | null>(null)
   const msgTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null)
   const moodTimerRef    = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -51,10 +51,33 @@ export default function FloatingBlue() {
   // ------- helpers -----------------------------------------------------------
 
   function clampX(val: number, size = blueSizeRef.current) {
-    return Math.max(size / 2, Math.min(window.innerWidth - size / 2, val))
+    const minX = window.scrollY < window.innerHeight
+      ? window.innerWidth * 0.55
+      : size / 2
+    return Math.max(minX, Math.min(window.innerWidth - size / 2, val))
   }
   function clampY(val: number, size = blueSizeRef.current) {
     return Math.max(size / 2 + 64, Math.min(window.innerHeight - size / 2, val))
+  }
+
+  function safeXY(px: number, py: number): [number, number] {
+    const W = window.innerWidth
+    const H = window.innerHeight
+    const textZones = [
+      { x1: 0, y1: 60, x2: W * 0.55, y2: H },  // hero left text area
+      { x1: 0, y1: 0,  x2: W,        y2: 80 },  // navbar
+    ]
+    let sx = px, sy = py
+    for (const zone of textZones) {
+      if (sx > zone.x1 && sx < zone.x2 && sy > zone.y1 && sy < zone.y2) {
+        if (zone.y2 === 80) {
+          sy = 120
+        } else {
+          sx = W * 0.65
+        }
+      }
+    }
+    return [sx, sy]
   }
 
   function setMoodSync(m: BlueMode, size: number) {
@@ -82,8 +105,11 @@ export default function FloatingBlue() {
       if (!isMountedRef.current) return
       const pick = randItem(['wander', 'dance', 'sleepy'] as const)
       if (pick === 'wander') {
-        x.set(clampX(window.innerWidth  * (0.15 + Math.random() * 0.7)))
-        y.set(clampY(window.innerHeight * (0.20 + Math.random() * 0.6)))
+        const wx = window.innerWidth  * (0.60 + Math.random() * 0.30)
+        const wy = window.innerHeight * (0.15 + Math.random() * 0.70)
+        const [sx, sy] = safeXY(clampX(wx), clampY(wy))
+        x.set(sx)
+        y.set(sy)
       } else if (pick === 'dance') {
         setMoodSync('dancing', 200)
         setTimeout(() => isMountedRef.current && setMoodSync('curious', 200), 2_000)
@@ -106,7 +132,7 @@ export default function FloatingBlue() {
     isMobileRef.current  = mobile
 
     const sx = clampX(window.innerWidth  * 0.82)
-    const sy = clampY(mobile ? window.innerHeight * 0.72 : window.innerHeight * 0.35)
+    const sy = clampY(mobile ? window.innerHeight * 0.72 : window.innerHeight * 0.30)
     x.set(sx); y.set(sy)
 
     setMounted(true)
@@ -114,7 +140,7 @@ export default function FloatingBlue() {
     const entryT = setTimeout(() => {
       if (!isMountedRef.current) return
       setIsVisible(true)
-      setMoodSync('curious', mobile ? 140 : 200)
+      setMoodSync('curious', mobile ? 130 : 160)
       setTimeout(() => {
         if (isMountedRef.current) showMsg("Hi! I'm Blue 👋", 3_000)
       }, 500)
@@ -141,11 +167,15 @@ export default function FloatingBlue() {
       const sx = springX.get(), sy = springY.get()
       const dx = e.clientX - sx, dy = e.clientY - sy
       const dist = Math.hypot(dx, dy)
-      if (dist > 200) {
+      if (dist > 300) {
         const angle = Math.atan2(dy, dx)
         const size  = blueSizeRef.current
-        x.set(clampX(e.clientX - Math.cos(angle) * 180, size))
-        y.set(clampY(e.clientY - Math.sin(angle) * 180, size))
+        const [cx, cy] = safeXY(
+          clampX(e.clientX - Math.cos(angle) * 250, size),
+          clampY(e.clientY - Math.sin(angle) * 250, size),
+        )
+        x.set(cx)
+        y.set(cy)
         if (dist > 400) {
           setMoodSync('excited', 220)
           if (moodTimerRef.current) clearTimeout(moodTimerRef.current)
@@ -305,7 +335,7 @@ export default function FloatingBlue() {
             top:          springY,
             translateX:   '-50%',
             translateY:   '-50%',
-            zIndex:       100,
+            zIndex:       50,
             pointerEvents:'none',
           }}
           initial={{ opacity: 0, scale: 0 }}

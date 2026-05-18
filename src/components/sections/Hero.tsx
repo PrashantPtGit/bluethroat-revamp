@@ -5,6 +5,7 @@ import { WhatsappLogo, ArrowDown } from '@phosphor-icons/react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useTypewriter } from '@/hooks/useTypewriter'
 import type { Lang } from '@/lib/i18n'
+import Blue from '../Blue'
 
 type HeroCopy = {
   boot: string
@@ -127,6 +128,33 @@ export default function Hero() {
         }}
       />
 
+      {/* Atmospheric Blue — decorative, right side, behind text */}
+      <div
+        aria-hidden
+        style={{
+          position:      'absolute',
+          right:         '-60px',
+          top:           '50%',
+          transform:     'translateY(-50%)',
+          zIndex:        0,
+          pointerEvents: 'none',
+          opacity:       0.35,
+        }}
+      >
+        <div style={{ position: 'relative' }}>
+          <Blue size={500} mood="idle" />
+          <div
+            style={{
+              position:      'absolute',
+              inset:         0,
+              background:    'linear-gradient(to right, #0D0F12 0%, transparent 40%)',
+              pointerEvents: 'none',
+              zIndex:        1,
+            }}
+          />
+        </div>
+      </div>
+
       {/* Two-column grid — responsive via Tailwind */}
       <div
         className="grid grid-cols-1 md:grid-cols-2"
@@ -141,7 +169,7 @@ export default function Hero() {
         }}
       >
         {/* ── Left column: text ──────────────────────────── */}
-        <div>
+        <div style={{ position: 'relative', zIndex: 2 }}>
           {/* Boot sequence */}
           <div
             style={{
