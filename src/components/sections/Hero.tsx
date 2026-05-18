@@ -5,6 +5,7 @@ import { WhatsappLogo, ArrowDown } from '@phosphor-icons/react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useTypewriter } from '@/hooks/useTypewriter'
 import type { Lang } from '@/lib/i18n'
+import Blue from '@/components/Blue'
 
 type HeroCopy = {
   boot: string
@@ -281,30 +282,7 @@ export default function Hero() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
         >
-          <motion.div
-            animate={{ y: [0, -12, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
-            style={{
-              width: '280px',
-              height: '320px',
-              background:
-                'linear-gradient(135deg, rgba(37,99,235,0.15) 0%, rgba(37,99,235,0.05) 100%)',
-              border: '1px solid rgba(37,99,235,0.2)',
-              borderRadius: '24px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '10px',
-            }}
-          >
-            <span
-              style={{ color: '#2563EB', fontSize: '14px', fontWeight: 500, letterSpacing: '0.05em' }}
-            >
-              ✦ Blue
-            </span>
-            <span style={{ color: '#475569', fontSize: '11px' }}>Character coming soon</span>
-          </motion.div>
+          <Blue size={260} />
         </motion.div>
       </div>
 
