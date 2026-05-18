@@ -282,7 +282,7 @@ export default function BlueIntro() {
               gap:            '16px',
             }}
           >
-            <Blue size={280} />
+            <Blue size={340} />
 
             <motion.p
               animate={{ opacity: [0.3, 0.8, 0.3] }}
