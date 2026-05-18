@@ -83,3 +83,9 @@ section {
     display: none !important;
   }
 }
+
+/* Tiny Blue IS the cursor on desktop */
+@media (min-width: 1024px) {
+  * { cursor: none !important; }
+  a, button, [role="button"] { cursor: none !important; }
+}

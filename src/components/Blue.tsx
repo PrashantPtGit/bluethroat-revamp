@@ -14,18 +14,18 @@ interface BlueProps {
 
 // 12 particles — 30° apart, varied radii/speeds/sizes, three colours
 const PARTICLES = [
-  { orbitRadius: 115, speed:  6, startAngle:   0, size: 4,   color: '#2563EB' },
-  { orbitRadius: 108, speed:  8, startAngle:  30, size: 2.5, color: '#06B6D4' },
-  { orbitRadius: 100, speed: 10, startAngle:  60, size: 3.5, color: '#60A5FA' },
-  { orbitRadius:  95, speed:  7, startAngle:  90, size: 2,   color: '#2563EB' },
-  { orbitRadius:  88, speed: 12, startAngle: 120, size: 4,   color: '#06B6D4' },
-  { orbitRadius:  82, speed:  9, startAngle: 150, size: 2.5, color: '#60A5FA' },
-  { orbitRadius:  75, speed: 14, startAngle: 180, size: 3,   color: '#2563EB' },
-  { orbitRadius: 110, speed: 11, startAngle: 210, size: 2,   color: '#06B6D4' },
-  { orbitRadius:  92, speed:  8, startAngle: 240, size: 3.5, color: '#60A5FA' },
-  { orbitRadius:  78, speed: 13, startAngle: 270, size: 2.5, color: '#2563EB' },
-  { orbitRadius: 105, speed:  7, startAngle: 300, size: 4,   color: '#06B6D4' },
-  { orbitRadius:  85, speed: 10, startAngle: 330, size: 2,   color: '#60A5FA' },
+  { orbitRadius: 115, speed:  6, startAngle:   0, size: 5,   color: '#2563EB' },
+  { orbitRadius: 108, speed:  8, startAngle:  30, size: 3.5, color: '#06B6D4' },
+  { orbitRadius: 100, speed: 10, startAngle:  60, size: 4.5, color: '#60A5FA' },
+  { orbitRadius:  95, speed:  7, startAngle:  90, size: 3,   color: '#2563EB' },
+  { orbitRadius:  88, speed: 12, startAngle: 120, size: 5,   color: '#06B6D4' },
+  { orbitRadius:  82, speed:  9, startAngle: 150, size: 3.5, color: '#60A5FA' },
+  { orbitRadius:  75, speed: 14, startAngle: 180, size: 4,   color: '#2563EB' },
+  { orbitRadius: 110, speed: 11, startAngle: 210, size: 3,   color: '#06B6D4' },
+  { orbitRadius:  92, speed:  8, startAngle: 240, size: 4.5, color: '#60A5FA' },
+  { orbitRadius:  78, speed: 13, startAngle: 270, size: 3.5, color: '#2563EB' },
+  { orbitRadius: 105, speed:  7, startAngle: 300, size: 5,   color: '#06B6D4' },
+  { orbitRadius:  85, speed: 10, startAngle: 330, size: 3,   color: '#60A5FA' },
 ]
 
 const ARCS = [
@@ -168,16 +168,24 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
         {/* L1: Outer ripple rings */}
         {showGlow && (
           <>
-            {([{ r: 120, d: 0.5, delay: 0 }, { r: 130, d: 0.3, delay: 1 }, { r: 140, d: 0.2, delay: 2 }] as const).map(({ r, d, delay }) => (
-              <motion.circle
-                key={r}
-                cx={150} cy={150} r={r}
-                stroke="#2563EB" strokeWidth={d} fill="none"
-                animate={{ scale: [1, 1.15, 1], opacity: rippleOp }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay }}
-                style={{ transformOrigin: '50% 50%' }}
-              />
-            ))}
+            {([
+              { r: 120, d: 0.5, delay: 0, baseOp: 0.5  },
+              { r: 130, d: 0.3, delay: 1, baseOp: 0.4  },
+              { r: 140, d: 0.2, delay: 2, baseOp: 0.35 },
+            ] as const).map(({ r, d, delay, baseOp }) => {
+              const moodScale = rippleOp[0] / 0.3
+              const peakOp   = Math.min(baseOp * moodScale, 1)
+              return (
+                <motion.circle
+                  key={r}
+                  cx={150} cy={150} r={r}
+                  stroke="#2563EB" strokeWidth={d} fill="none"
+                  animate={{ scale: [1, 1.15, 1], opacity: [peakOp, rippleOp[1], peakOp] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay }}
+                  style={{ transformOrigin: '50% 50%' }}
+                />
+              )
+            })}
           </>
         )}
 
@@ -254,9 +262,9 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
 
         {/* L8: Core glow circles */}
         {([
-          { r: 55, fill: '#2563EB', opacity: 0.06, maxScale: 1.3, delay: 0   },
-          { r: 40, fill: '#2563EB', opacity: 0.12, maxScale: 1.2, delay: 0.3 },
-          { r: 26, fill: '#06B6D4', opacity: 0.2,  maxScale: 1.15,delay: 0.6 },
+          { r: 70, fill: '#2563EB', opacity: 0.12, maxScale: 1.3, delay: 0   },
+          { r: 55, fill: '#2563EB', opacity: 0.12, maxScale: 1.2, delay: 0.3 },
+          { r: 38, fill: '#06B6D4', opacity: 0.2,  maxScale: 1.15,delay: 0.6 },
         ] as const).map(({ r, fill, opacity, maxScale, delay }) => (
           <motion.circle
             key={r}
@@ -313,7 +321,7 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
             key={i}
             x1={arc.x1} y1={arc.y1} x2={arc.x2} y2={arc.y2}
             stroke="#60A5FA" strokeWidth={1.5} strokeLinecap="round"
-            animate={{ opacity: [0, 0.8, 0], scaleY: [0.5, 1, 0.5] }}
+            animate={{ opacity: [0, 1, 0], scaleY: [0.5, 1, 0.5] }}
             transition={{
               duration:    0.4,
               repeat:      Infinity,
@@ -324,10 +332,25 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
           />
         ))}
 
+        {/* L11b: Long energy rays from core outward */}
+        {([
+          { x2: 150, y2:  20, delay: 0,   repeatDelay: 1   },
+          { x2: 280, y2:  80, delay: 0.5, repeatDelay: 2.5 },
+          { x2: 280, y2: 220, delay: 1.0, repeatDelay: 4   },
+        ] as const).map(({ x2, y2, delay, repeatDelay }) => (
+          <motion.line
+            key={`ray-${x2}-${y2}`}
+            x1={150} y1={150} x2={x2} y2={y2}
+            stroke="#2563EB" strokeWidth={0.8} strokeLinecap="round"
+            animate={{ opacity: [0, 0.4, 0] }}
+            transition={{ duration: 2, repeat: Infinity, delay, repeatDelay }}
+          />
+        ))}
+
         {/* L12: Scan line */}
         <motion.line
           x1={90} x2={210} y1={0} y2={0}
-          stroke="#2563EB" strokeWidth={0.5} opacity={0.4}
+          stroke="#2563EB" strokeWidth={0.5} opacity={0.6}
           animate={{ y: [60, 240, 60] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         />

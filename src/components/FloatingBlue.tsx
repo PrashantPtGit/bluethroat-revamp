@@ -29,14 +29,23 @@ export default function FloatingBlue() {
   const [mounted,   setMounted]   = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [mood,      setMood]      = useState<BlueMode>('idle')
-  const [blueSize,  setBlueSize]  = useState(160)
-  const [message,   setMessage]   = useState<string | null>(null)
+  const [blueSize,     setBlueSize]     = useState(160)
+  const [message,      setMessage]      = useState<string | null>(null)
+  const [isHovering,   setIsHovering]   = useState(false)
+  const [clickPulse,   setClickPulse]   = useState(false)
+  const [isTouchDevice,setIsTouchDevice]= useState(false)
 
   // Motion values + springs
   const x       = useMotionValue(0)
   const y       = useMotionValue(0)
   const springX = useSpring(x, { stiffness: 35, damping: 18, mass: 1.2 })
   const springY = useSpring(y, { stiffness: 35, damping: 18, mass: 1.2 })
+
+  // Cursor Blue — snappy spring
+  const cursorX       = useMotionValue(0)
+  const cursorY       = useMotionValue(0)
+  const cursorSpringX = useSpring(cursorX, { stiffness: 400, damping: 28, mass: 0.3 })
+  const cursorSpringY = useSpring(cursorY, { stiffness: 400, damping: 28, mass: 0.3 })
 
   // Refs for stable access inside callbacks
   const isMountedRef    = useRef(false)
@@ -130,6 +139,7 @@ export default function FloatingBlue() {
     isMountedRef.current = true
     const mobile = window.innerWidth < 768 || 'ontouchstart' in window
     isMobileRef.current  = mobile
+    setIsTouchDevice(mobile)
 
     const sx = clampX(window.innerWidth  * 0.82)
     const sy = clampY(mobile ? window.innerHeight * 0.72 : window.innerHeight * 0.30)
@@ -163,6 +173,8 @@ export default function FloatingBlue() {
     if (!mounted) return
     const handle = (e: MouseEvent) => {
       if (isMobileRef.current) return
+      cursorX.set(e.clientX)
+      cursorY.set(e.clientY)
       resetIdle()
       const sx = springX.get(), sy = springY.get()
       const dx = e.clientX - sx, dy = e.clientY - sy
@@ -198,6 +210,8 @@ export default function FloatingBlue() {
       const target = e.target as HTMLElement
       if (target.closest('.floating-blue-inner')) return
       resetIdle()
+      setClickPulse(true)
+      setTimeout(() => { if (isMountedRef.current) setClickPulse(false) }, 300)
       setMoodSync('happy', 240)
       showMsg(randItem(HAPPY_MESSAGES), 1_500)
       if (moodTimerRef.current) clearTimeout(moodTimerRef.current)
@@ -217,6 +231,7 @@ export default function FloatingBlue() {
     const handleOver = (e: MouseEvent) => {
       if (isMobileRef.current) return
       const target = e.target as HTMLElement
+      setIsHovering(!!(target.closest('a, button, [role="button"]')))
       const cta = target.closest('a[href*="whatsapp"], [data-cursor="cta"]') as HTMLElement | null
       if (cta) {
         const rect = cta.getBoundingClientRect()
@@ -232,6 +247,10 @@ export default function FloatingBlue() {
       }
     }
     const handleOut = (e: MouseEvent) => {
+      if (!isMobileRef.current) {
+        const to = e.relatedTarget as HTMLElement | null
+        if (!to?.closest('a, button, [role="button"]')) setIsHovering(false)
+      }
       const fromCTA = (e.target as HTMLElement).closest('a[href*="whatsapp"], [data-cursor="cta"]')
       const to = e.relatedTarget as HTMLElement | null
       if (fromCTA && (!to || !to.closest('a[href*="whatsapp"], [data-cursor="cta"]'))) {
@@ -325,64 +344,91 @@ export default function FloatingBlue() {
   if (!mounted) return null
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          className="floating-blue"
-          style={{
-            position:     'fixed',
-            left:         springX,
-            top:          springY,
-            translateX:   '-50%',
-            translateY:   '-50%',
-            zIndex:       50,
-            pointerEvents:'none',
-          }}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{    opacity: 0, scale: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <div
-            className="floating-blue-inner"
-            style={{ position: 'relative', pointerEvents: 'auto', cursor: 'pointer' }}
-            onClick={handleBlueClick}
+    <>
+      {/* Main floating Blue */}
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            className="floating-blue"
+            style={{
+              position:     'fixed',
+              left:         springX,
+              top:          springY,
+              translateX:   '-50%',
+              translateY:   '-50%',
+              zIndex:       50,
+              pointerEvents:'none',
+            }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{    opacity: 0, scale: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Blue size={blueSize} mood={mood} />
+            <div
+              className="floating-blue-inner"
+              style={{ position: 'relative', pointerEvents: 'auto', cursor: 'pointer' }}
+              onClick={handleBlueClick}
+            >
+              <Blue size={blueSize} mood={mood} />
 
-            {/* Speech bubble */}
-            <AnimatePresence>
-              {message && (
-                <motion.div
-                  key={message}
-                  initial={{ opacity: 0, y: 10, scale: 0.8 }}
-                  animate={{ opacity: 1, y: 0,  scale: 1   }}
-                  exit={{    opacity: 0, y: -10, scale: 0.8 }}
-                  transition={{ duration: 0.25 }}
-                  style={{
-                    position:      'absolute',
-                    top:           '-50px',
-                    left:          '50%',
-                    transform:     'translateX(-50%)',
-                    background:    'rgba(13,15,18,0.92)',
-                    border:        '1px solid rgba(37,99,235,0.3)',
-                    borderRadius:  '12px 12px 12px 4px',
-                    padding:       '8px 14px',
-                    fontSize:      '12px',
-                    color:         '#F8FAFC',
-                    whiteSpace:    'nowrap',
-                    boxShadow:     '0 0 20px rgba(37,99,235,0.2)',
-                    pointerEvents: 'none',
-                    zIndex:        101,
-                  }}
-                >
-                  {message}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+              {/* Speech bubble */}
+              <AnimatePresence>
+                {message && (
+                  <motion.div
+                    key={message}
+                    initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                    animate={{ opacity: 1, y: 0,  scale: 1   }}
+                    exit={{    opacity: 0, y: -10, scale: 0.8 }}
+                    transition={{ duration: 0.25 }}
+                    style={{
+                      position:      'absolute',
+                      top:           '-50px',
+                      left:          '50%',
+                      transform:     'translateX(-50%)',
+                      background:    'rgba(13,15,18,0.92)',
+                      border:        '1px solid rgba(37,99,235,0.3)',
+                      borderRadius:  '12px 12px 12px 4px',
+                      padding:       '8px 14px',
+                      fontSize:      '12px',
+                      color:         '#F8FAFC',
+                      whiteSpace:    'nowrap',
+                      boxShadow:     '0 0 20px rgba(37,99,235,0.2)',
+                      pointerEvents: 'none',
+                      zIndex:        101,
+                    }}
+                  >
+                    {message}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Tiny cursor Blue — snaps to cursor, IS the cursor on desktop */}
+      <motion.div
+        style={{
+          position:      'fixed',
+          left:          cursorSpringX,
+          top:           cursorSpringY,
+          translateX:    '-50%',
+          translateY:    '-50%',
+          zIndex:        99,
+          pointerEvents: 'none',
+        }}
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{
+          opacity: isTouchDevice ? 0 : 0.9,
+          scale:   clickPulse ? 1.8 : (isHovering ? 1.3 : 1),
+        }}
+        transition={{
+          opacity: { duration: 0.5, delay: 0.5 },
+          scale:   { duration: 0.2 },
+        }}
+      >
+        <Blue size={55} mood="idle" />
+      </motion.div>
+    </>
   )
 }
