@@ -198,6 +198,7 @@ export default function ProblemBlock() {
   return (
     <motion.section
       ref={sectionRef}
+      data-blue-mood="troubled"
       initial="hidden"
       animate={isInView ? 'show' : 'hidden'}
       style={{

@@ -84,6 +84,7 @@ export default function TrustBar() {
   return (
     <motion.div
       ref={sectionRef}
+      data-blue-mood="confident"
       initial="hidden"
       animate={isInView ? 'show' : 'hidden'}
       style={{

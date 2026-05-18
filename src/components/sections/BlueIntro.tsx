@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { CheckCircle, ArrowRight } from '@phosphor-icons/react'
 import Blue from '@/components/Blue'
+import { useBlueState } from '@/hooks/useBlueState'
 import { useTypewriter } from '@/hooks/useTypewriter'
 
 // ---------------------------------------------------------------------------
@@ -86,6 +87,7 @@ const blueColVariants = {
 export default function BlueIntro() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' })
+  const { mood } = useBlueState()
 
   // Start typewriter only once section enters view
   const [bubbleText, setBubbleText] = useState('')
@@ -105,6 +107,7 @@ export default function BlueIntro() {
   return (
     <motion.section
       ref={sectionRef}
+      data-blue-mood="excited"
       initial="hidden"
       animate={isInView ? 'show' : 'hidden'}
       style={{
@@ -282,7 +285,7 @@ export default function BlueIntro() {
               gap:            '16px',
             }}
           >
-            <Blue size={340} />
+            <Blue size={340} mood={mood} />
 
             <motion.p
               animate={{ opacity: [0.3, 0.8, 0.3] }}

@@ -6,6 +6,7 @@ import { useLanguage } from '@/context/LanguageContext'
 import { useTypewriter } from '@/hooks/useTypewriter'
 import type { Lang } from '@/lib/i18n'
 import Blue from '@/components/Blue'
+import { useBlueState } from '@/hooks/useBlueState'
 
 type HeroCopy = {
   boot: string
@@ -93,6 +94,7 @@ export default function Hero() {
   const { lang } = useLanguage()
   const copy = HERO_COPY[lang]
   const { displayed, isComplete } = useTypewriter(copy.boot, 40, 300)
+  const { mood } = useBlueState()
 
   function scrollToWork() {
     const el = document.getElementById('work')
@@ -103,6 +105,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
+      data-blue-mood="curious"
       style={{
         position:      'relative',
         minHeight:     '100vh',
@@ -231,7 +234,7 @@ export default function Hero() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Blue size={380} />
+            <Blue size={380} mood={mood} />
           </motion.div>
         </div>
       </div>
