@@ -7,7 +7,7 @@ import LenisProvider from '@/components/LenisProvider'
 import Navbar from '@/components/Navbar'
 import GlobalBackground from '@/components/GlobalBackground'
 import ScrollStory from '@/components/ScrollStory'
-import ScrollOrb from '@/components/ScrollOrb'
+import CursorGlow from '@/components/CursorGlow'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <LenisProvider>
             <Navbar />
             <ScrollStory />
-            <ScrollOrb />
+            <CursorGlow />
             {children}
           </LenisProvider>
         </LanguageProvider>
