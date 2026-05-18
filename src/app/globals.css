@@ -76,3 +76,10 @@ section {
   background: #2563EB;
   border-radius: 3px;
 }
+
+/* Hide scroll-orb elements on small screens */
+@media (max-width: 1023px) {
+  .scroll-orb {
+    display: none !important;
+  }
+}
