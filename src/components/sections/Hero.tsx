@@ -5,8 +5,6 @@ import { WhatsappLogo, ArrowDown } from '@phosphor-icons/react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useTypewriter } from '@/hooks/useTypewriter'
 import type { Lang } from '@/lib/i18n'
-import Blue from '@/components/Blue'
-import { useBlueState } from '@/hooks/useBlueState'
 
 type HeroCopy = {
   boot: string
@@ -94,8 +92,6 @@ export default function Hero() {
   const { lang } = useLanguage()
   const copy = HERO_COPY[lang]
   const { displayed, isComplete } = useTypewriter(copy.boot, 40, 300)
-  const { mood } = useBlueState()
-
   function scrollToWork() {
     const el = document.getElementById('work')
     if (el) el.scrollIntoView({ behavior: 'smooth' })
@@ -224,19 +220,8 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* ── Right column: Blue character (hidden on mobile) ── */}
-        <div
-          className="hidden md:flex"
-          style={{ alignItems: 'center', justifyContent: 'center' }}
-        >
-          <motion.div
-            initial={{ opacity: 0, x: 60 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <Blue size={380} mood={mood} />
-          </motion.div>
-        </div>
+        {/* ── Right column: placeholder (Blue roams freely) ── */}
+        <div className="hidden md:block" style={{ minHeight: '300px' }} />
       </div>
 
       {/* Scroll indicator */}

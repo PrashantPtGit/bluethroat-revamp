@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 
-export type BlueMode = 'idle' | 'curious' | 'troubled' | 'confident' | 'excited' | 'dancing'
+export type BlueMode =
+  | 'idle' | 'curious' | 'troubled' | 'confident' | 'excited' | 'dancing'
+  | 'happy' | 'leading' | 'pointing' | 'sleepy'
 
 const ATTR_MAP: Record<string, BlueMode> = {
   curious:   'curious',

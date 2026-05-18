@@ -47,7 +47,7 @@ const READOUTS = [
 
 // ── Per-mood animation tables ────────────────────────────────────────────────
 
-type FloatAnim = { y: number[]; x?: number[]; rotate?: number[] }
+type FloatAnim = { y: number[]; x?: number[]; rotate?: number[]; scaleY?: number[] }
 
 const FLOAT_ANIM: Record<BlueMode, FloatAnim> = {
   idle:      { y: [0, -18, 0] },
@@ -56,6 +56,10 @@ const FLOAT_ANIM: Record<BlueMode, FloatAnim> = {
   confident: { y: [0, -25, 0] },
   excited:   { y: [0, -30, 5, -25, 0, -20, 3, 0],   rotate: [-3, 3, -2, 2, 0] },
   dancing:   { y: [0, -40, 0, -20, 0],               x: [-15, 15, -10, 10, 0], rotate: [0, 360] },
+  happy:     { y: [0, -35, 0, -15, 0],               rotate: [0, 360] },
+  leading:   { y: [0, -20, 0, -15, 0],               scaleY: [1, 1.25, 1] },
+  pointing:  { y: [0, -10, 0],                       x: [0, 6, 0] },
+  sleepy:    { y: [0, -6, 0] },
 }
 
 const FLOAT_TRANS: Record<BlueMode, { duration: number; repeat: number; ease?: 'easeInOut' | 'linear' }> = {
@@ -65,34 +69,49 @@ const FLOAT_TRANS: Record<BlueMode, { duration: number; repeat: number; ease?: '
   confident: { duration: 5.0, repeat: Infinity, ease: 'easeInOut' },
   excited:   { duration: 1.8, repeat: Infinity },
   dancing:   { duration: 2.0, repeat: 0 },
+  happy:     { duration: 1.2, repeat: 0 },
+  leading:   { duration: 2.0, repeat: Infinity, ease: 'easeInOut' },
+  pointing:  { duration: 3.0, repeat: Infinity, ease: 'easeInOut' },
+  sleepy:    { duration: 7.0, repeat: Infinity, ease: 'easeInOut' },
 }
 
-const RING_A_DUR:   Record<BlueMode, number> = { idle: 20, curious: 12, troubled: 8,  confident: 25, excited: 6,  dancing: 2  }
-const RING_B_DUR:   Record<BlueMode, number> = { idle: 14, curious: 8,  troubled: 6,  confident: 18, excited: 4,  dancing: 2  }
-const RING_C_DUR:   Record<BlueMode, number> = { idle: 9,  curious: 5,  troubled: 3,  confident: 12, excited: 2,  dancing: 1  }
-const ELLIPSE_DUR:  Record<BlueMode, number> = { idle: 10, curious: 7,  troubled: 5,  confident: 14, excited: 3,  dancing: 1.5}
-const ELLIPSE2_DUR: Record<BlueMode, number> = { idle: 12, curious: 8,  troubled: 6,  confident: 16, excited: 4,  dancing: 2  }
+const RING_A_DUR:   Record<BlueMode, number> = { idle: 20, curious: 12, troubled: 8,  confident: 25, excited: 6,  dancing: 2,   happy: 4,  leading: 10, pointing: 28, sleepy: 60  }
+const RING_B_DUR:   Record<BlueMode, number> = { idle: 14, curious: 8,  troubled: 6,  confident: 18, excited: 4,  dancing: 2,   happy: 3,  leading: 7,  pointing: 20, sleepy: 45  }
+const RING_C_DUR:   Record<BlueMode, number> = { idle: 9,  curious: 5,  troubled: 3,  confident: 12, excited: 2,  dancing: 1,   happy: 2,  leading: 5,  pointing: 15, sleepy: 30  }
+const ELLIPSE_DUR:  Record<BlueMode, number> = { idle: 10, curious: 7,  troubled: 5,  confident: 14, excited: 3,  dancing: 1.5, happy: 2,  leading: 6,  pointing: 18, sleepy: 35  }
+const ELLIPSE2_DUR: Record<BlueMode, number> = { idle: 12, curious: 8,  troubled: 6,  confident: 16, excited: 4,  dancing: 2,   happy: 2.5,leading: 7,  pointing: 22, sleepy: 40  }
 
 type CorePulse = { scale: number[]; dur: number }
 const CORE_PULSE: Record<BlueMode, CorePulse> = {
-  idle:      { scale: [1, 1.1, 1],             dur: 2   },
-  curious:   { scale: [1, 1.15, 0.95, 1.1, 1], dur: 1.5 },
-  troubled:  { scale: [1, 0.85, 1.1, 0.9, 1],  dur: 0.8 },
-  confident: { scale: [1, 1.2, 1],              dur: 3   },
-  excited:   { scale: [1, 1.3, 0.9, 1.2, 1],   dur: 0.6 },
-  dancing:   { scale: [1, 2, 1, 1.5, 1],        dur: 0.4 },
+  idle:      { scale: [1, 1.1, 1],              dur: 2   },
+  curious:   { scale: [1, 1.15, 0.95, 1.1, 1],  dur: 1.5 },
+  troubled:  { scale: [1, 0.85, 1.1, 0.9, 1],   dur: 0.8 },
+  confident: { scale: [1, 1.2, 1],               dur: 3   },
+  excited:   { scale: [1, 1.3, 0.9, 1.2, 1],    dur: 0.6 },
+  dancing:   { scale: [1, 2, 1, 1.5, 1],         dur: 0.4 },
+  happy:     { scale: [1, 1.6, 0.8, 1.4, 1],     dur: 0.5 },
+  leading:   { scale: [1, 1.15, 1],              dur: 1.5 },
+  pointing:  { scale: [1, 1.08, 1],              dur: 2.5 },
+  sleepy:    { scale: [1, 1.02, 1],              dur: 5   },
 }
 
 // Particle orbit speed multiplier (lower = faster)
-const PARTICLE_MULT: Record<BlueMode, number> = { idle: 1, curious: 0.7, troubled: 1.3, confident: 1, excited: 0.5, dancing: 0.3 }
+const PARTICLE_MULT: Record<BlueMode, number> = {
+  idle: 1, curious: 0.7, troubled: 1.3, confident: 1, excited: 0.5, dancing: 0.3,
+  happy: 0.3, leading: 0.6, pointing: 1.5, sleepy: 3.0,
+}
 
 // Burst repeatDelay override (null = use per-burst base delays)
 const BURST_DELAY: Record<BlueMode, number | null> = {
   idle: null, curious: 2, troubled: 5, confident: 1, excited: 0.4, dancing: 0.15,
+  happy: 0.2, leading: 1.5, pointing: null, sleepy: 15,
 }
 
 // Glow scale amplifier for the three core-glow circles
-const GLOW_MULT: Record<BlueMode, number> = { idle: 1, curious: 1, troubled: 0.9, confident: 1.3, excited: 1.4, dancing: 1.5 }
+const GLOW_MULT: Record<BlueMode, number> = {
+  idle: 1, curious: 1, troubled: 0.9, confident: 1.3, excited: 1.4, dancing: 1.5,
+  happy: 1.6, leading: 1.1, pointing: 0.8, sleepy: 0.4,
+}
 
 // Ripple-ring opacity range
 const RIPPLE_OPACITY: Record<BlueMode, [number, number, number]> = {
@@ -102,6 +121,10 @@ const RIPPLE_OPACITY: Record<BlueMode, [number, number, number]> = {
   confident: [0.5, 0,   0.5],
   excited:   [0.6, 0.1, 0.6],
   dancing:   [0.8, 0.2, 0.8],
+  happy:     [0.7, 0.2, 0.7],
+  leading:   [0.4, 0,   0.4],
+  pointing:  [0.2, 0,   0.2],
+  sleepy:    [0.1, 0,   0.1],
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
