@@ -18,36 +18,36 @@ type HeroCopy = {
 
 const HERO_COPY: Record<Lang, HeroCopy> = {
   en: {
-    boot: 'BLUE · SYSTEM ONLINE // Connecting to your business...',
-    headline: 'Meet Blue —',
+    boot:           'BLUE · SYSTEM ONLINE // Connecting to your business...',
+    headline:       'Meet Blue —',
     headlineAccent: 'saves you 2–4 hours every day',
-    sub: 'AI automation for clinics, coaches, gym owners & consultants in Ireland',
-    cta1: 'WhatsApp Blue',
-    cta2: 'See What Blue Builds',
+    sub:            'AI automation for clinics, coaches, gym owners & consultants in Ireland',
+    cta1:           'WhatsApp Blue',
+    cta2:           'See What Blue Builds',
   },
   ga: {
-    boot: 'BLUE · CÓRAS AR LÍNE // Ag nascadh le do ghnó...',
-    headline: 'Cas le Blue —',
+    boot:           'BLUE · CÓRAS AR LÍNE // Ag nascadh le do ghnó...',
+    headline:       'Cas le Blue —',
     headlineAccent: 'Sábhálann sé 2–4 uair an chloig gach lá',
-    sub: 'Uathoibriú AI do chlinicí, cóitseálaithe, úinéirí gym & comhairleoirí in Éirinn',
-    cta1: 'WhatsApp Blue',
-    cta2: 'Féach ar Obair Blue',
+    sub:            'Uathoibriú AI do chlinicí, cóitseálaithe, úinéirí gym & comhairleoirí in Éirinn',
+    cta1:           'WhatsApp Blue',
+    cta2:           'Féach ar Obair Blue',
   },
   fr: {
-    boot: 'BLUE · SYSTÈME EN LIGNE // Connexion à votre entreprise...',
-    headline: 'Rencontrez Blue —',
+    boot:           'BLUE · SYSTÈME EN LIGNE // Connexion à votre entreprise...',
+    headline:       'Rencontrez Blue —',
     headlineAccent: 'vous économise 2 à 4 heures par jour',
-    sub: "Automatisation IA pour cliniques, coachs, propriétaires de salles & consultants en Irlande",
-    cta1: 'WhatsApp Blue',
-    cta2: 'Voir les réalisations de Blue',
+    sub:            'Automatisation IA pour cliniques, coachs, propriétaires de salles & consultants en Irlande',
+    cta1:           'WhatsApp Blue',
+    cta2:           'Voir les réalisations de Blue',
   },
   es: {
-    boot: 'BLUE · SISTEMA EN LÍNEA // Conectando con tu negocio...',
-    headline: 'Conoce a Blue —',
+    boot:           'BLUE · SISTEMA EN LÍNEA // Conectando con tu negocio...',
+    headline:       'Conoce a Blue —',
     headlineAccent: 'te ahorra 2–4 horas cada día',
-    sub: 'Automatización IA para clínicas, coaches, dueños de gimnasios y consultores en Irlanda',
-    cta1: 'WhatsApp Blue',
-    cta2: 'Ver lo que Blue crea',
+    sub:            'Automatización IA para clínicas, coaches, dueños de gimnasios y consultores en Irlanda',
+    cta1:           'WhatsApp Blue',
+    cta2:           'Ver lo que Blue crea',
   },
 }
 
@@ -93,6 +93,7 @@ export default function Hero() {
   const { lang } = useLanguage()
   const copy = HERO_COPY[lang]
   const { displayed, isComplete } = useTypewriter(copy.boot, 40, 300)
+
   function scrollToWork() {
     const el = document.getElementById('work')
     if (el) el.scrollIntoView({ behavior: 'smooth' })
@@ -107,8 +108,7 @@ export default function Hero() {
         position:      'relative',
         minHeight:     '100vh',
         display:       'flex',
-        flexDirection: 'column',
-        justifyContent:'center',
+        alignItems:    'center',
         paddingTop:    '64px',
         paddingBottom: '40px',
         paddingLeft:   '24px',
@@ -128,145 +128,119 @@ export default function Hero() {
         }}
       />
 
-      {/* Ambient glow behind atmospheric Blue */}
-      <div
-        aria-hidden
-        style={{
-          position:     'absolute',
-          right:        '-100px',
-          top:          '50%',
-          transform:    'translateY(-50%)',
-          width:        '600px',
-          height:       '600px',
-          borderRadius: '50%',
-          background:   'radial-gradient(circle, rgba(37,99,235,0.12) 0%, rgba(6,182,212,0.06) 40%, transparent 70%)',
-          pointerEvents:'none',
-          zIndex:       -1,
-        }}
-      />
-
-      {/* Atmospheric Blue — decorative, right side, behind text */}
+      {/* Atmospheric Blue — absolute right side, behind text */}
       <div
         aria-hidden
         style={{
           position:      'absolute',
-          right:         '-80px',
+          right:         '-60px',
           top:           '50%',
           transform:     'translateY(-50%)',
           zIndex:        0,
           pointerEvents: 'none',
-          opacity:       0.68,
+          width:         '660px',
+          height:        '660px',
         }}
       >
-        <div style={{ position: 'relative' }}>
-          <Blue size={640} mood="idle" />
-          <div
-            style={{
-              position:      'absolute',
-              inset:         0,
-              background:    'linear-gradient(to right, #0D0F12 0%, #0D0F12 5%, rgba(13,15,18,0.92) 18%, rgba(13,15,18,0.6) 32%, rgba(13,15,18,0.2) 50%, transparent 68%)',
-              pointerEvents: 'none',
-              zIndex:        1,
-            }}
-          />
+        <div
+          style={{
+            position:   'absolute',
+            inset:      0,
+            background: 'linear-gradient(to right, #0D0F12 0%, #0D0F12 4%, rgba(13,15,18,0.9) 15%, rgba(13,15,18,0.55) 30%, rgba(13,15,18,0.18) 50%, transparent 68%)',
+            zIndex:     2,
+            pointerEvents: 'none',
+          }}
+        />
+        <div style={{ opacity: 0.72, position: 'relative', zIndex: 1 }}>
+          <Blue size={660} />
         </div>
       </div>
 
-      {/* Two-column grid — responsive via Tailwind */}
+      {/* Main content — single column, z-index 2 */}
       <div
-        className="grid grid-cols-1 md:grid-cols-2"
         style={{
           position: 'relative',
-          zIndex:   1,
-          maxWidth: '1100px',
+          zIndex:   2,
+          maxWidth: '700px',
           width:    '100%',
-          margin:   '0 auto',
-          gap:      '48px',
-          alignItems: 'center',
         }}
       >
-        {/* ── Left column: text ──────────────────────────── */}
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          {/* Boot sequence */}
-          <div
-            style={{
-              fontFamily:    'monospace',
-              fontSize:      '11px',
-              letterSpacing: '0.15em',
-              color:         '#2563EB',
-              textTransform: 'uppercase',
-              marginBottom:  '28px',
-              minHeight:     '16px',
-            }}
-          >
-            {displayed}
-            {!isComplete && (
-              <motion.span
-                animate={{ opacity: [1, 0] }}
-                transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
-                style={{ display: 'inline-block', marginLeft: '1px' }}
-              >
-                |
-              </motion.span>
-            )}
-          </div>
-
-          {/* Headline */}
-          <div style={{ marginBottom: '4px' }}>
-            <AnimatedWords text={copy.headline}       color="#F8FAFC" delayChildren={1.8} />
-          </div>
-          <div style={{ marginBottom: '36px' }}>
-            <AnimatedWords text={copy.headlineAccent} color="#2563EB" delayChildren={2.4} />
-          </div>
-
-          {/* Subheadline */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.2, duration: 0.8 }}
-            style={{ fontSize: '18px', color: '#94A3B8', lineHeight: 1.6, maxWidth: '520px', margin: '0 0 40px' }}
-          >
-            {copy.sub}
-          </motion.p>
-
-          {/* CTA buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.6, duration: 0.8 }}
-            className="flex flex-col sm:flex-row"
-            style={{ gap: '12px' }}
-          >
-            <motion.a
-              href="https://wa.me/919336731183"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.02, backgroundColor: '#1D4ED8' }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: 'tween', duration: 0.2 }}
-              className="flex items-center justify-center sm:justify-start"
-              style={{ gap: '8px', backgroundColor: '#2563EB', color: '#ffffff', borderRadius: '10px', padding: '14px 28px', fontSize: '15px', fontWeight: 500, textDecoration: 'none' }}
+        {/* Boot sequence */}
+        <div
+          style={{
+            fontFamily:    'monospace',
+            fontSize:      '11px',
+            letterSpacing: '0.15em',
+            color:         '#2563EB',
+            textTransform: 'uppercase',
+            marginBottom:  '28px',
+            minHeight:     '16px',
+          }}
+        >
+          {displayed}
+          {!isComplete && (
+            <motion.span
+              animate={{ opacity: [1, 0] }}
+              transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
+              style={{ display: 'inline-block', marginLeft: '1px' }}
             >
-              <WhatsappLogo size={18} weight="fill" />
-              {copy.cta1}
-            </motion.a>
-
-            <motion.button
-              onClick={scrollToWork}
-              whileHover={{ scale: 1.02, borderColor: 'rgba(255,255,255,0.4)', backgroundColor: 'rgba(255,255,255,0.05)' }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: 'tween', duration: 0.2 }}
-              className="flex items-center justify-center sm:justify-start"
-              style={{ gap: '8px', background: 'transparent', color: '#F8FAFC', borderRadius: '10px', padding: '14px 28px', fontSize: '15px', fontWeight: 500, borderWidth: '1px', borderStyle: 'solid', borderColor: 'rgba(255,255,255,0.15)', cursor: 'pointer' }}
-            >
-              {copy.cta2}
-              <ArrowDown size={18} />
-            </motion.button>
-          </motion.div>
+              |
+            </motion.span>
+          )}
         </div>
 
-        {/* ── Right column: placeholder (Blue roams freely) ── */}
-        <div className="hidden md:block" style={{ minHeight: '300px' }} />
+        {/* Headline — line 1: white, line 2: blue */}
+        <div style={{ marginBottom: '4px' }}>
+          <AnimatedWords text={copy.headline}       color="#F8FAFC" delayChildren={1.8} />
+        </div>
+        <div style={{ marginBottom: '36px' }}>
+          <AnimatedWords text={copy.headlineAccent} color="#2563EB" delayChildren={2.4} />
+        </div>
+
+        {/* Subheadline */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 3.2, duration: 0.8 }}
+          style={{ fontSize: '18px', color: '#94A3B8', lineHeight: 1.6, maxWidth: '520px', margin: '0 0 40px' }}
+        >
+          {copy.sub}
+        </motion.p>
+
+        {/* CTA buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 3.6, duration: 0.8 }}
+          className="flex flex-col sm:flex-row"
+          style={{ gap: '12px' }}
+        >
+          <motion.a
+            href="https://wa.me/919336731183"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.02, backgroundColor: '#1D4ED8' }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'tween', duration: 0.2 }}
+            className="flex items-center justify-center sm:justify-start"
+            style={{ gap: '8px', backgroundColor: '#2563EB', color: '#ffffff', borderRadius: '10px', padding: '14px 28px', fontSize: '15px', fontWeight: 500, textDecoration: 'none' }}
+          >
+            <WhatsappLogo size={18} weight="fill" />
+            {copy.cta1}
+          </motion.a>
+
+          <motion.button
+            onClick={scrollToWork}
+            whileHover={{ scale: 1.02, borderColor: 'rgba(255,255,255,0.4)', backgroundColor: 'rgba(255,255,255,0.05)' }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'tween', duration: 0.2 }}
+            className="flex items-center justify-center sm:justify-start"
+            style={{ gap: '8px', background: 'transparent', color: '#F8FAFC', borderRadius: '10px', padding: '14px 28px', fontSize: '15px', fontWeight: 500, borderWidth: '1px', borderStyle: 'solid', borderColor: 'rgba(255,255,255,0.15)', cursor: 'pointer' }}
+          >
+            {copy.cta2}
+            <ArrowDown size={18} />
+          </motion.button>
+        </motion.div>
       </div>
 
       {/* Scroll indicator */}
