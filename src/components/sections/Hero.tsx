@@ -150,21 +150,21 @@ export default function Hero() {
         aria-hidden
         style={{
           position:      'absolute',
-          right:         '-120px',
+          right:         '-100px',
           top:           '50%',
           transform:     'translateY(-50%)',
           zIndex:        0,
           pointerEvents: 'none',
-          opacity:       0.70,
+          opacity:       0.7,
         }}
       >
         <div style={{ position: 'relative' }}>
-          <Blue size={620} mood="idle" />
+          <Blue size={680} mood="idle" />
           <div
             style={{
               position:      'absolute',
               inset:         0,
-              background:    'linear-gradient(to right, #0D0F12 0%, #0D0F12 8%, rgba(13,15,18,0.9) 18%, rgba(13,15,18,0.5) 32%, rgba(13,15,18,0.15) 50%, transparent 68%)',
+              background:    'linear-gradient(to right, #0D0F12 0%, #0D0F12 5%, rgba(13,15,18,0.88) 15%, rgba(13,15,18,0.55) 28%, rgba(13,15,18,0.2) 45%, transparent 62%)',
               pointerEvents: 'none',
               zIndex:        1,
             }}
