@@ -28,13 +28,6 @@ const PARTICLES = [
   { orbitRadius:  85, speed: 10, startAngle: 330, size: 3,   color: '#60A5FA' },
 ]
 
-const ARCS = [
-  { x1: 150, y1: 132, x2: 150, y2: 110, delay: 0,   baseRepeatDelay: 2   },
-  { x1: 168, y1: 150, x2: 190, y2: 150, delay: 1,   baseRepeatDelay: 3   },
-  { x1: 150, y1: 168, x2: 150, y2: 190, delay: 2,   baseRepeatDelay: 4   },
-  { x1: 132, y1: 150, x2: 110, y2: 150, delay: 3,   baseRepeatDelay: 2.5 },
-]
-
 const BURST_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315]
 const BURST_BASE_DELAYS = [1.5, 2.5, 3.5, 2, 4, 1.8, 3, 2.8]
 
@@ -69,11 +62,6 @@ const FLOAT_TRANS: Record<BlueMode, { duration: number; repeat: number; ease?: '
   sleepy:    { duration: 7.0, repeat: Infinity, ease: 'easeInOut' },
 }
 
-const RING_A_DUR:   Record<BlueMode, number> = { idle: 20, curious: 12, troubled: 8,  confident: 25, excited: 6,  dancing: 2,   happy: 4,  leading: 10, pointing: 28, sleepy: 60  }
-const RING_B_DUR:   Record<BlueMode, number> = { idle: 14, curious: 8,  troubled: 6,  confident: 18, excited: 4,  dancing: 2,   happy: 3,  leading: 7,  pointing: 20, sleepy: 45  }
-const RING_C_DUR:   Record<BlueMode, number> = { idle: 9,  curious: 5,  troubled: 3,  confident: 12, excited: 2,  dancing: 1,   happy: 2,  leading: 5,  pointing: 15, sleepy: 30  }
-const ELLIPSE_DUR:  Record<BlueMode, number> = { idle: 10, curious: 7,  troubled: 5,  confident: 14, excited: 3,  dancing: 1.5, happy: 2,  leading: 6,  pointing: 18, sleepy: 35  }
-const ELLIPSE2_DUR: Record<BlueMode, number> = { idle: 12, curious: 8,  troubled: 6,  confident: 16, excited: 4,  dancing: 2,   happy: 2.5,leading: 7,  pointing: 22, sleepy: 40  }
 
 type CorePulse = { scale: number[]; dur: number }
 const CORE_PULSE: Record<BlueMode, CorePulse> = {
@@ -199,54 +187,6 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
           </>
         )}
 
-        {/* L2: Ring A — outer dashed */}
-        <motion.circle
-          cx={150} cy={150} r={108}
-          stroke="#2563EB" strokeWidth={1.5} fill="none"
-          strokeDasharray={mood === 'troubled' ? '2 4' : '4 8'} opacity={0.55}
-          animate={{ rotate: 360 }}
-          transition={{ duration: RING_A_DUR[mood], repeat: Infinity, ease: 'linear' }}
-          style={{ transformOrigin: '50% 50%' }}
-        />
-
-        {/* L3: Ring B — counter dashed */}
-        <motion.circle
-          cx={150} cy={150} r={88}
-          stroke="#06B6D4" strokeWidth={1.2} fill="none"
-          strokeDasharray="2 6" opacity={0.65}
-          animate={{ rotate: mood === 'troubled' ? 360 : -360 }}
-          transition={{ duration: RING_B_DUR[mood], repeat: Infinity, ease: 'linear' }}
-          style={{ transformOrigin: '50% 50%' }}
-        />
-
-        {/* L4: Ring C — inner fine dashed */}
-        <motion.circle
-          cx={150} cy={150} r={70}
-          stroke="#06B6D4" strokeWidth={1.0} fill="none"
-          strokeDasharray="1 4" opacity={0.45}
-          animate={{ rotate: 360 }}
-          transition={{ duration: RING_C_DUR[mood], repeat: Infinity, ease: 'linear' }}
-          style={{ transformOrigin: '50% 50%' }}
-        />
-
-        {/* L5: Tilted orbit ellipse */}
-        <motion.ellipse
-          cx={150} cy={150} rx={105} ry={28}
-          stroke="#2563EB" strokeWidth={1.2} fill="none" opacity={0.40}
-          animate={{ rotate: [35, 395] }}
-          transition={{ duration: ELLIPSE_DUR[mood], repeat: Infinity, ease: 'linear' }}
-          style={{ transformOrigin: '50% 50%' }}
-        />
-
-        {/* L6: Counter-tilted orbit ellipse */}
-        <motion.ellipse
-          cx={150} cy={150} rx={105} ry={28}
-          stroke="#06B6D4" strokeWidth={1.0} fill="none" opacity={0.35}
-          animate={{ rotate: [-35, -395] }}
-          transition={{ duration: ELLIPSE2_DUR[mood], repeat: Infinity, ease: 'linear' }}
-          style={{ transformOrigin: '50% 50%' }}
-        />
-
         {/* L7: Orbiting particles */}
         <g filter={`url(#${particleGlowId})`}>
           {PARTICLES.map((p, i) => {
@@ -327,38 +267,6 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
             />
           )
         })}
-
-        {/* L11: Electric arc lines */}
-        {ARCS.map((arc, i) => (
-          <motion.line
-            key={i}
-            x1={arc.x1} y1={arc.y1} x2={arc.x2} y2={arc.y2}
-            stroke="#60A5FA" strokeWidth={2} strokeLinecap="round"
-            animate={{ opacity: [0, 1, 0], scaleY: [0.5, 1, 0.5] }}
-            transition={{
-              duration:    0.4,
-              repeat:      Infinity,
-              repeatDelay: arc.baseRepeatDelay,
-              delay:       arc.delay,
-            }}
-            style={{ transformOrigin: 'center' }}
-          />
-        ))}
-
-        {/* L11b: Long energy rays from core outward */}
-        {([
-          { x2: 150, y2:  20, delay: 0,   repeatDelay: 1   },
-          { x2: 280, y2:  80, delay: 0.5, repeatDelay: 2.5 },
-          { x2: 280, y2: 220, delay: 1.0, repeatDelay: 4   },
-        ] as const).map(({ x2, y2, delay, repeatDelay }) => (
-          <motion.line
-            key={`ray-${x2}-${y2}`}
-            x1={150} y1={150} x2={x2} y2={y2}
-            stroke="#2563EB" strokeWidth={0.8} strokeLinecap="round"
-            animate={{ opacity: [0, 0.4, 0] }}
-            transition={{ duration: 2, repeat: Infinity, delay, repeatDelay }}
-          />
-        ))}
 
       </svg>
     </motion.div>

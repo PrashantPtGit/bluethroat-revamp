@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { CheckCircle, ArrowRight } from '@phosphor-icons/react'
 import { useTypewriter } from '@/hooks/useTypewriter'
+import Blue from '@/components/Blue'
 
 // ---------------------------------------------------------------------------
 // Data
@@ -269,19 +270,34 @@ export default function BlueIntro() {
 
           </div>
 
-          {/* ── Right column — Blue roams freely as global character ── */}
+          {/* ── Right column — atmospheric Blue ── */}
           <div
             style={{
               flex:           '0 1 40%',
+              position:       'relative',
               display:        'flex',
               alignItems:     'center',
-              justifyContent: 'center',
-              minHeight:      '320px',
+              justifyContent: 'flex-end',
+              overflow:       'hidden',
+              minHeight:      '400px',
             }}
           >
-            <p style={{ fontSize: '12px', color: '#475569', textAlign: 'center', userSelect: 'none' }}>
-              Blue is somewhere on this page…
-            </p>
+            {/* Gradient fade — left edge blends into background */}
+            <div style={{
+              position:      'absolute',
+              inset:         0,
+              background:    'linear-gradient(to right, #0D0F12 0%, rgba(13,15,18,0.6) 30%, transparent 60%)',
+              zIndex:        1,
+              pointerEvents: 'none',
+            }} />
+            <div style={{
+              position:    'relative',
+              zIndex:      0,
+              opacity:     0.65,
+              marginRight: '-80px',
+            }}>
+              <Blue size={480} mood="idle" />
+            </div>
           </div>
 
         </div>
