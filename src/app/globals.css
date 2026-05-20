@@ -7,7 +7,7 @@
 
 :root {
   --accent: #2563EB;
-  --bg:     #060810;
+  --bg:     #0D0F12;
 }
 
 *,
@@ -23,7 +23,7 @@ html {
 }
 
 body {
-  background: #060810;
+  background: #0D0F12;
   color: #F8FAFC;
   overflow-x: hidden;
   font-family: var(--font-geist-sans), system-ui, sans-serif;

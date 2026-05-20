@@ -90,19 +90,19 @@ export default function GlobalBackground() {
       const n1x = W * 0.15 + Math.sin(time * 0.00018) * W * 0.08
       const n1y = H * 0.25 + Math.cos(time * 0.00012) * H * 0.12
       const g1  = ctx.createRadialGradient(n1x, n1y, 0, n1x, n1y, 350)
-      g1.addColorStop(0, 'rgba(37,99,235,0.025)'); g1.addColorStop(1, 'transparent')
+      g1.addColorStop(0, 'rgba(37,99,235,0.018)'); g1.addColorStop(1, 'transparent')
       ctx.fillStyle = g1; ctx.beginPath(); ctx.arc(n1x, n1y, 350, 0, Math.PI * 2); ctx.fill()
 
       const n2x = W * 0.82 + Math.sin(time * 0.00014 + 2) * W * 0.07
       const n2y = H * 0.55 + Math.cos(time * 0.00020 + 1) * H * 0.10
       const g2  = ctx.createRadialGradient(n2x, n2y, 0, n2x, n2y, 280)
-      g2.addColorStop(0, 'rgba(6,182,212,0.018)'); g2.addColorStop(1, 'transparent')
+      g2.addColorStop(0, 'rgba(6,182,212,0.013)'); g2.addColorStop(1, 'transparent')
       ctx.fillStyle = g2; ctx.beginPath(); ctx.arc(n2x, n2y, 280, 0, Math.PI * 2); ctx.fill()
 
       const n3x = W * 0.5  + Math.sin(time * 0.00016 + 4) * W * 0.12
       const n3y = H * 0.78 + Math.cos(time * 0.00011 + 3) * H * 0.08
       const g3  = ctx.createRadialGradient(n3x, n3y, 0, n3x, n3y, 320)
-      g3.addColorStop(0, 'rgba(139,92,246,0.015)'); g3.addColorStop(1, 'transparent')
+      g3.addColorStop(0, 'rgba(139,92,246,0.011)'); g3.addColorStop(1, 'transparent')
       ctx.fillStyle = g3; ctx.beginPath(); ctx.arc(n3x, n3y, 320, 0, Math.PI * 2); ctx.fill()
     }
 
