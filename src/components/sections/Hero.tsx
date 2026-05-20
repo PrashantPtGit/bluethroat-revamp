@@ -133,26 +133,26 @@ export default function Hero() {
         aria-hidden
         style={{
           position:      'absolute',
-          right:         '-60px',
+          right:         '-140px',
           top:           '50%',
           transform:     'translateY(-50%)',
           zIndex:        0,
           pointerEvents: 'none',
-          width:         '660px',
-          height:        '660px',
+          width:         '780px',
+          height:        '780px',
         }}
       >
         <div
           style={{
-            position:   'absolute',
-            inset:      0,
-            background: 'linear-gradient(to right, #0D0F12 0%, #0D0F12 4%, rgba(13,15,18,0.9) 15%, rgba(13,15,18,0.55) 30%, rgba(13,15,18,0.18) 50%, transparent 68%)',
-            zIndex:     2,
+            position:      'absolute',
+            inset:         0,
+            zIndex:        2,
             pointerEvents: 'none',
+            background:    'linear-gradient(to right, #0D0F12 0%, #0D0F12 3%, rgba(13,15,18,0.95) 12%, rgba(13,15,18,0.7) 25%, rgba(13,15,18,0.3) 42%, rgba(13,15,18,0.08) 58%, transparent 72%)',
           }}
         />
-        <div style={{ opacity: 0.72, position: 'relative', zIndex: 1 }}>
-          <Blue size={660} />
+        <div style={{ opacity: 0.75, position: 'relative', zIndex: 1 }}>
+          <Blue size={780} />
         </div>
       </div>
 
