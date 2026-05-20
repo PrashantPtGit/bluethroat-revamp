@@ -38,12 +38,6 @@ const ARCS = [
 const BURST_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315]
 const BURST_BASE_DELAYS = [1.5, 2.5, 3.5, 2, 4, 1.8, 3, 2.8]
 
-const READOUTS = [
-  { text: 'ONLINE',  x: 150, y:  28, anchor: 'middle', baseOpacity: 0.5, color: '#2563EB', fontSize: 8, delay: 0   },
-  { text: '■ ■ ■',  x: 268, y: 154, anchor: 'start',  baseOpacity: 0.4, color: '#06B6D4', fontSize: 7, delay: 0.5 },
-  { text: 'v2.4.1', x: 150, y: 280, anchor: 'middle', baseOpacity: 0.4, color: '#2563EB', fontSize: 8, delay: 1   },
-  { text: '■ ■ ■',  x:  32, y: 154, anchor: 'end',    baseOpacity: 0.4, color: '#06B6D4', fontSize: 7, delay: 1.5 },
-]
 
 // ── Per-mood animation tables ────────────────────────────────────────────────
 
@@ -130,8 +124,10 @@ const RIPPLE_OPACITY: Record<BlueMode, [number, number, number]> = {
 // ── Component ────────────────────────────────────────────────────────────────
 
 export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: BlueProps) {
-  const uid        = useId().replace(/:/g, '')
-  const gradientId = `coreGradient-${uid}`
+  const uid           = useId().replace(/:/g, '')
+  const gradientId    = `coreGradient-${uid}`
+  const particleGlowId = `particleGlow-${uid}`
+  const coreGlowId    = `coreGlow-${uid}`
 
   const floatAnim   = FLOAT_ANIM[mood]
   const floatTrans  = FLOAT_TRANS[mood]
@@ -163,16 +159,30 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
             <stop offset="60%"  stopColor="#2563EB" />
             <stop offset="100%" stopColor="#1D4ED8" />
           </radialGradient>
+          <filter id={particleGlowId} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1.5" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <filter id={coreGlowId} x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="4" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
         </defs>
 
         {/* L1: Outer ripple rings */}
         {showGlow && (
           <>
             {([
-              { r: 120, d: 0.5, delay: 0, baseOp: 0.5  },
-              { r: 130, d: 0.3, delay: 1, baseOp: 0.4  },
-              { r: 140, d: 0.2, delay: 2, baseOp: 0.35 },
-            ] as const).map(({ r, d, delay, baseOp }) => {
+              { r: 120, d: 0.5, delay: 0, baseOp: 0.5,  minOp: 0.10 },
+              { r: 130, d: 0.3, delay: 1, baseOp: 0.4,  minOp: 0.05 },
+              { r: 140, d: 0.2, delay: 2, baseOp: 0.35, minOp: 0.05 },
+            ] as const).map(({ r, d, delay, baseOp, minOp }) => {
               const moodScale = rippleOp[0] / 0.3
               const peakOp   = Math.min(baseOp * moodScale, 1)
               return (
@@ -180,7 +190,7 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
                   key={r}
                   cx={150} cy={150} r={r}
                   stroke="#2563EB" strokeWidth={d} fill="none"
-                  animate={{ scale: [1, 1.15, 1], opacity: [peakOp, rippleOp[1], peakOp] }}
+                  animate={{ scale: [1, 1.15, 1], opacity: [peakOp, minOp, peakOp] }}
                   transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay }}
                   style={{ transformOrigin: '50% 50%' }}
                 />
@@ -192,8 +202,8 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
         {/* L2: Ring A — outer dashed */}
         <motion.circle
           cx={150} cy={150} r={108}
-          stroke="#2563EB" strokeWidth={1} fill="none"
-          strokeDasharray={mood === 'troubled' ? '2 4' : '4 8'} opacity={0.4}
+          stroke="#2563EB" strokeWidth={1.5} fill="none"
+          strokeDasharray={mood === 'troubled' ? '2 4' : '4 8'} opacity={0.55}
           animate={{ rotate: 360 }}
           transition={{ duration: RING_A_DUR[mood], repeat: Infinity, ease: 'linear' }}
           style={{ transformOrigin: '50% 50%' }}
@@ -202,8 +212,8 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
         {/* L3: Ring B — counter dashed */}
         <motion.circle
           cx={150} cy={150} r={88}
-          stroke="#06B6D4" strokeWidth={1} fill="none"
-          strokeDasharray="2 6" opacity={0.5}
+          stroke="#06B6D4" strokeWidth={1.2} fill="none"
+          strokeDasharray="2 6" opacity={0.65}
           animate={{ rotate: mood === 'troubled' ? 360 : -360 }}
           transition={{ duration: RING_B_DUR[mood], repeat: Infinity, ease: 'linear' }}
           style={{ transformOrigin: '50% 50%' }}
@@ -212,8 +222,8 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
         {/* L4: Ring C — inner fine dashed */}
         <motion.circle
           cx={150} cy={150} r={70}
-          stroke="#06B6D4" strokeWidth={0.8} fill="none"
-          strokeDasharray="1 4" opacity={0.3}
+          stroke="#06B6D4" strokeWidth={1.0} fill="none"
+          strokeDasharray="1 4" opacity={0.45}
           animate={{ rotate: 360 }}
           transition={{ duration: RING_C_DUR[mood], repeat: Infinity, ease: 'linear' }}
           style={{ transformOrigin: '50% 50%' }}
@@ -222,7 +232,7 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
         {/* L5: Tilted orbit ellipse */}
         <motion.ellipse
           cx={150} cy={150} rx={105} ry={28}
-          stroke="#2563EB" strokeWidth={1} fill="none" opacity={0.25}
+          stroke="#2563EB" strokeWidth={1.2} fill="none" opacity={0.40}
           animate={{ rotate: [35, 395] }}
           transition={{ duration: ELLIPSE_DUR[mood], repeat: Infinity, ease: 'linear' }}
           style={{ transformOrigin: '50% 50%' }}
@@ -231,40 +241,42 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
         {/* L6: Counter-tilted orbit ellipse */}
         <motion.ellipse
           cx={150} cy={150} rx={105} ry={28}
-          stroke="#06B6D4" strokeWidth={0.8} fill="none" opacity={0.2}
+          stroke="#06B6D4" strokeWidth={1.0} fill="none" opacity={0.35}
           animate={{ rotate: [-35, -395] }}
           transition={{ duration: ELLIPSE2_DUR[mood], repeat: Infinity, ease: 'linear' }}
           style={{ transformOrigin: '50% 50%' }}
         />
 
         {/* L7: Orbiting particles */}
-        {PARTICLES.map((p, i) => {
-          const a = p.startAngle * Math.PI / 180
-          return (
-            <g key={i} transform="translate(150, 150)">
-              <motion.g
-                animate={{ rotate: 360 }}
-                transition={{ duration: p.speed * particleMul, repeat: Infinity, ease: 'linear' }}
-                style={{ transformOrigin: '0px 0px' }}
-              >
-                <motion.circle
-                  cx={p.orbitRadius * Math.cos(a)}
-                  cy={p.orbitRadius * Math.sin(a)}
-                  r={p.size}
-                  fill={p.color}
-                  animate={{ opacity: [0.4, 1, 0.4] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.2, ease: 'easeInOut' }}
-                />
-              </motion.g>
-            </g>
-          )
-        })}
+        <g filter={`url(#${particleGlowId})`}>
+          {PARTICLES.map((p, i) => {
+            const a = p.startAngle * Math.PI / 180
+            return (
+              <g key={i} transform="translate(150, 150)">
+                <motion.g
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: p.speed * particleMul, repeat: Infinity, ease: 'linear' }}
+                  style={{ transformOrigin: '0px 0px' }}
+                >
+                  <motion.circle
+                    cx={p.orbitRadius * Math.cos(a)}
+                    cy={p.orbitRadius * Math.sin(a)}
+                    r={p.size}
+                    fill={p.color}
+                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.2, ease: 'easeInOut' }}
+                  />
+                </motion.g>
+              </g>
+            )
+          })}
+        </g>
 
         {/* L8: Core glow circles */}
         {([
-          { r: 70, fill: '#2563EB', opacity: 0.12, maxScale: 1.3, delay: 0   },
-          { r: 55, fill: '#2563EB', opacity: 0.12, maxScale: 1.2, delay: 0.3 },
-          { r: 38, fill: '#06B6D4', opacity: 0.2,  maxScale: 1.15,delay: 0.6 },
+          { r: 70, fill: '#2563EB', opacity: 0.18, maxScale: 1.3, delay: 0   },
+          { r: 55, fill: '#2563EB', opacity: 0.22, maxScale: 1.2, delay: 0.3 },
+          { r: 38, fill: '#06B6D4', opacity: 0.30, maxScale: 1.15,delay: 0.6 },
         ] as const).map(({ r, fill, opacity, maxScale, delay }) => (
           <motion.circle
             key={r}
@@ -280,6 +292,7 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
         <motion.circle
           cx={150} cy={150} r={18}
           fill={`url(#${gradientId})`}
+          filter={`url(#${coreGlowId})`}
           animate={{ scale: corePulse.scale }}
           transition={{ duration: corePulse.dur, repeat: Infinity, ease: 'easeInOut' }}
           style={{ transformOrigin: '50% 50%' }}
@@ -320,7 +333,7 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
           <motion.line
             key={i}
             x1={arc.x1} y1={arc.y1} x2={arc.x2} y2={arc.y2}
-            stroke="#60A5FA" strokeWidth={1.5} strokeLinecap="round"
+            stroke="#60A5FA" strokeWidth={2} strokeLinecap="round"
             animate={{ opacity: [0, 1, 0], scaleY: [0.5, 1, 0.5] }}
             transition={{
               duration:    0.4,
@@ -347,36 +360,6 @@ export default function Blue({ size = 420, showGlow = true, mood = 'idle' }: Blu
           />
         ))}
 
-        {/* L12: Scan line */}
-        <motion.line
-          x1={90} x2={210} y1={0} y2={0}
-          stroke="#2563EB" strokeWidth={0.5} opacity={0.6}
-          animate={{ y: [60, 240, 60] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        {/* L13: Data readout labels */}
-        {READOUTS.map(({ text, x, y, anchor, baseOpacity, color, fontSize, delay }, i) => {
-          const opMult = mood === 'curious' || mood === 'confident' ? 1.6 : 1
-          return (
-            <motion.g
-              key={i}
-              animate={{ opacity: [baseOpacity * 0.4 * opMult, Math.min(baseOpacity * 1.6 * opMult, 1), baseOpacity * 0.4 * opMult] }}
-              transition={{ duration: 2.5, repeat: Infinity, delay, ease: 'easeInOut' }}
-            >
-              <text
-                x={x} y={y}
-                textAnchor={anchor as 'middle' | 'start' | 'end'}
-                fontSize={fontSize}
-                fill={color}
-                fontFamily="monospace"
-                style={{ userSelect: 'none', pointerEvents: 'none', letterSpacing: '0.08em' }}
-              >
-                {text}
-              </text>
-            </motion.g>
-          )
-        })}
       </svg>
     </motion.div>
   )

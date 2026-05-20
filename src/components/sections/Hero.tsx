@@ -128,26 +128,43 @@ export default function Hero() {
         }}
       />
 
+      {/* Ambient glow behind atmospheric Blue */}
+      <div
+        aria-hidden
+        style={{
+          position:     'absolute',
+          right:        '-100px',
+          top:          '50%',
+          transform:    'translateY(-50%)',
+          width:        '600px',
+          height:       '600px',
+          borderRadius: '50%',
+          background:   'radial-gradient(circle, rgba(37,99,235,0.12) 0%, rgba(6,182,212,0.06) 40%, transparent 70%)',
+          pointerEvents:'none',
+          zIndex:       -1,
+        }}
+      />
+
       {/* Atmospheric Blue — decorative, right side, behind text */}
       <div
         aria-hidden
         style={{
           position:      'absolute',
-          right:         '-180px',
+          right:         '-220px',
           top:           '50%',
           transform:     'translateY(-50%)',
           zIndex:        0,
           pointerEvents: 'none',
-          opacity:       0.55,
+          opacity:       0.75,
         }}
       >
         <div style={{ position: 'relative' }}>
-          <Blue size={780} mood="idle" />
+          <Blue size={900} mood="idle" />
           <div
             style={{
               position:      'absolute',
               inset:         0,
-              background:    'linear-gradient(to right, #0D0F12 0%, #0D0F12 15%, rgba(13,15,18,0.7) 30%, rgba(13,15,18,0.2) 50%, transparent 70%)',
+              background:    'linear-gradient(to right, #0D0F12 0%, #0D0F12 10%, rgba(13,15,18,0.85) 20%, rgba(13,15,18,0.4) 35%, rgba(13,15,18,0.1) 50%, transparent 65%)',
               pointerEvents: 'none',
               zIndex:        1,
             }}
